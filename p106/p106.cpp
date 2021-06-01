@@ -1,8 +1,11 @@
 ﻿#include <iostream>
+#include <ctime>
+#include <string>
+#include "settingsReader.h"
 
 using namespace std;
 
-int main()
-{
-    cout << "Hello World!\n";
+int main() {
+	settingsReader settings;
+	cout << "Fajna gra | " << settings.getAPIVersion();
 }

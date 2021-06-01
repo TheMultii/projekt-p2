@@ -139,7 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="p106.cpp" />
+    <ClCompile Include="settingsReader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gameEngine.h" />
+    <ClInclude Include="settingsReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
