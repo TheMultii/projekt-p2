@@ -1,13 +1,12 @@
 #pragma once
-#include <iostream>
-#include <string>
+#include "player.h"
 
-using namespace std;
 
 class gameEngine {
 private:
-	string apiversion;
+	player* Player;
 public:
-	gameEngine() {}
+	gameEngine(); //konstr. domyœlny (nowa gra)
+	// gameEngine(const player& p); //konstr. z wczytywania gry
 };
 

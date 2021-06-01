@@ -1,0 +1,15 @@
+#include "weaponBase.h"
+#include <iomanip>
+
+weaponBase::weaponBase(const double& bD, const double& cC, const double& p) {
+	baseDamage = bD;
+	criticalChance = cC;
+	price = p;
+}
+
+std::ostream& operator<<(std::ostream& o, const weaponBase& wB) {
+	o << std::fixed << std::setw(5) << std::setprecision(2) << wB.baseDamage;
+	o << " | ";
+	o << std::fixed << std::setw(5) << std::setprecision(2) << (wB.criticalChance * 100);
+	return o;
+}

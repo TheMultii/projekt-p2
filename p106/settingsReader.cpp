@@ -111,7 +111,7 @@ settingsReader::settingsReader() {
 	}
 	settingsFile.close();
 	linecount.close();
-	this_thread::sleep_for(chrono::milliseconds(1250)); //u¿ytkownik pomyœli, ¿e bardzo skomplikowana aplikacja siê ³adujê
+	//this_thread::sleep_for(chrono::milliseconds(1250)); //u¿ytkownik pomyœli, ¿e bardzo skomplikowana aplikacja siê ³adujê
 	system("cls");
 	cout << "Rozpoczynam synchronizacjê z serwerem...\n";
 	Json::Value obj{};
@@ -119,7 +119,7 @@ settingsReader::settingsReader() {
 		system("cls");
 		v4Base = obj;
 		cout << "Pomyœlnie zsynchronizowano z serwerem.\nWersja API, z której korzystam: " << this->getAPIVersion();
-		string temp = "title Fajna gra ";
+		string temp = "title Fajna gra - ";
 		temp.append(this->getAPIVersion());
 		system(temp.c_str());
 	} else {

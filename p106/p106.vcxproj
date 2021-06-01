@@ -139,13 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="armorBase.cpp" />
     <ClCompile Include="gameEngine.cpp" />
+    <ClCompile Include="gameUtilities.cpp" />
     <ClCompile Include="p106.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="settingsReader.cpp" />
+    <ClCompile Include="weaponBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="armorBase.h" />
     <ClInclude Include="gameEngine.h" />
+    <ClInclude Include="gameUtilities.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="settingsReader.h" />
+    <ClInclude Include="weaponBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
