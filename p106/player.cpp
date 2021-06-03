@@ -85,12 +85,22 @@ armorBase* player::getArmor() {
 	return armor;
 }
 
+std::string player::getUsername() {
+	return username;
+}
+
 void player::setWeapon(weaponBase* wB) {
+	delete weapon;
 	weapon = wB;
 }
 
 void player::setArmor(armorBase* aB) {
+	delete armor;
 	armor = aB;
+}
+
+void player::setMoney(const double& money) {
+	this->money = money;
 }
 
 void player::addXP(const int& val) {
@@ -111,7 +121,7 @@ std::ostream& operator<<(std::ostream& o, const player& p) {
 	setColor();
 	o << "|";
 	o << setfill('.') << setw(8) << std::right << p.xp << "/" << p.xpToNextLevel << "XP|";
-	o << "WEP:" << setfill('.') << setw(8) << std::right << p.weapon->getBaseDamage() << "/" << p.weapon->getCriticalChance() << "/" << p.weapon->getPrice() << "$|";
+	o << "WEP:" << setfill('.') << setw(8) << std::right << p.weapon->getBaseDamage() << "/" << (p.weapon->getCriticalChance() * 100) << "%/" << p.weapon->getPrice() << "$|";
 	o << "ARM:" << setfill('.') << setw(8) << std::right << p.armor->getBaseProtection() << "/" << p.armor->getPrice() << "$|";
 	setColor(2);
 	o << "MON:" << setfill('.') << setw(6) << std::right << p.money << "$";

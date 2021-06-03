@@ -29,12 +29,11 @@ public:
 	double getMoney();
 	weaponBase* getWeapon();
 	armorBase* getArmor();
-	std::string getUsername() {
-		return username;
-	}
+	std::string getUsername();
 
 	void setWeapon(weaponBase* wB);
 	void setArmor(armorBase* aB);
+	void setMoney(const double& money);
 	
 	void addXP(const int& val);
 };

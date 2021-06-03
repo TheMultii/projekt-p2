@@ -25,7 +25,7 @@ gameEngine::gameEngine() {
 }
 
 gameEngine::gameEngine(const std::string& uuid) {
-    Player = new player("", 0, 0, 0, 0, 0, 0, 0, 0);
+    //Player = new player("", 0, 0, 0, 0, 0, 0, 0, 0);
     CURL* curl;
     CURLcode res;
     string readBuffer, errors{};
@@ -141,11 +141,23 @@ void gameEngine::saveGame(const string& uuid) {
 
 // koniec zapisywania
 
+
+double randomRangeDouble(double min, double max) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_real_distribution<> distr(min, max);
+    return distr(gen);
+}
+
 int randomRange(int min, int max) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> distr(min, max);
     return distr(gen);
+}
+
+double to2Decimal(double x) {
+    return ceil(x * 100.0) / 100.0;
 }
 
 void gotoxy(short x, short y) {
@@ -154,19 +166,18 @@ void gotoxy(short x, short y) {
 }
 
 void yourChoiceTemplate() {
-    gotoxy(0, 20);
+    gotoxy(0, 25);
     cout << "+ ----------------------------------------------------------------------------------------------- +\n";
     cout << "|  Twój wybór | \n";
     cout << "+ ----------------------------------------------------------------------------------------------- +\n";
-    gotoxy(98, 21);
+    gotoxy(98, 26);
     cout << "|";
-    gotoxy(16, 21);
+    gotoxy(16, 26);
 }
 
 void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
-    boolean stopMainLoop = false;
     int choice;
-    while (!stopMainLoop) {
+    while (1) {
         system("cls");
         cout << *getPlayer();
         gotoxy(0, 3);
@@ -178,7 +189,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
 
         yourChoiceTemplate();
         cin >> choice;
-        gotoxy(0, 23);
+        gotoxy(0, 28);
         while (cin.fail() || choice < 1 || choice > 5) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -188,52 +199,147 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
         }
         switch (choice) {
         case 1:
-        case 2:
             cout << "\nJeszcze niezrobione. :<\n";
             system("pause");
             break;
-        case 3: {
-            system("cls");
-            cout << *getPlayer();
-            gotoxy(0, 3);
-            gU.setColor(15);
-            string powitania[8] = {
-                "Poka¿ mi swoje towary...",
-                "Czego potrzebujesz?",
-                "Reklama dŸwigni¹ handlu, tu reklamy nie ma",
-                "Zwrotów nie przyjmujemy",
-                "Broñ nie posiada atestów",
-                "Dobrze, ¿e nie widaæ, jaki ba³agan w tym sklepie",
-                "Programista p³aka³, jak pisa³",
-                "Gdzie lezie? Ma kase? Trzy tysi¹ce dukatów albo spadaj!"
-            };
-            cout << powitania[randomRange(0, 7)] << "\n";
-            gU.setColor();
-
-            gotoxy(0, 8);
-            cout << "+ ------------------------------------------- ";
-            gU.setColor(12);
-            cout << "BRONIE";
-            gU.setColor();
-            cout << " -------------------------------------------- + \n";
-            cout << "\n"; //content
-            cout << "+ ----------------------------------------------------------------------------------------------- + ";
+        case 2:
             
-            cout << "\n\n";
-            
-            cout << "+ ------------------------------------------ ";
-            gU.setColor(12);
-            cout << "PANCERZE";
-            gU.setColor();
-            cout << " ------------------------------------------- +\n";
-            cout << "\n"; //content
-            cout << "+ ----------------------------------------------------------------------------------------------- + ";
-
-            string innerChoice;
-            yourChoiceTemplate();
-            cin >> innerChoice;
-            gotoxy(0, 23);
             system("pause");
+            break;
+        case 3: {
+            weaponBase bronie[] = {
+                weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
+                weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
+                weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()))
+            };
+            armorBase pancerze[] = {
+                armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
+                armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
+                armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()))
+            };
+            string powitania[8] = {
+                    "Poka¿ mi swoje towary...",
+                    "Czego potrzebujesz?",
+                    "Reklama dŸwigni¹ handlu, ale tu reklamy nie ma.",
+                    "Zwrotów nie przyjmujemy.",
+                    "Broñ nie posiada atestów.",
+                    "Dobrze, ¿e nie widaæ, jaki ba³agan w tym sklepie.",
+                    "Programista p³aka³, jak pisa³.",
+                    "Gdzie lezie? Ma kase? Trzy tysi¹ce dukatów albo spadaj!"
+            };
+            string powitanie = powitania[randomRange(0, 7)];
+            boolean isShopOpen = true;
+            while (isShopOpen) {
+                system("cls");
+                cout << *getPlayer();
+                gotoxy(0, 4);
+                gU.setColor(15);
+                cout << powitanie << "\n"; 
+                gU.setColor();
+                gotoxy(0, 8);
+                cout << "+ ------------------------------------------- ";
+                gU.setColor(12);
+                cout << "BRONIE";
+                gU.setColor();
+                cout << " -------------------------------------------- + \n";
+                cout << "|      OBR, KRYT (%), CENA\n";
+                gotoxy(98, 9);
+                cout << "|";
+                for (int i = 0; i < 3; i++) {
+                    gotoxy(0, 10 + i);
+                    cout << "| ";
+                    gU.setColor(9);
+                    cout << "B" << i << ". ";
+                    gU.setColor(7);
+                    cout << fixed << setprecision(2) << bronie[i].getBaseDamage() << ",     " << setprecision(2) << (bronie[i].getCriticalChance() * 100) << ", ";
+                    gU.setColor(2);
+                    cout << fixed << setprecision(2) << bronie[i].getPrice() << "$\n";
+                    gU.setColor();
+                    gotoxy(98, 10 + i);
+                    cout << "|";
+                }
+                gotoxy(0, 13);
+                cout << "+ ----------------------------------------------------------------------------------------------- + ";
+                cout << "\n\n";
+                cout << "+ ------------------------------------------ ";
+                gU.setColor(12);
+                cout << "PANCERZE";
+                gU.setColor();
+                cout << " ------------------------------------------- + \n";
+                cout << "|     PROT,  CENA\n";
+                gotoxy(98, 16);
+                cout << "|";
+                for (int i = 0; i < 3; i++) {
+                    gotoxy(0, 17 + i);
+                    cout << "| ";
+                    gU.setColor(9);
+                    cout << "P" << i << ". ";
+                    gU.setColor(7);
+                    cout << fixed << setprecision(2) << pancerze[i].getBaseProtection() << ", ";
+                    gU.setColor(2);
+                    cout << fixed << setprecision(2) << pancerze[i].getPrice() << "$\n";
+                    gU.setColor();
+                    gotoxy(98, 17 + i);
+                    cout << "|";
+                }
+                gotoxy(0, 20);
+
+                cout << "+ ----------------------------------------------------------------------------------------------- +\n\n\n\n";
+
+                gU.setColor(15);
+                cout << "W - wyjdŸ; B0,B1,B2,P0,P1,P2 - kup odpowiedni¹ broñ/pancerz, O - odœwie¿ ofertê sklepu";
+                gU.setColor();
+                string innerChoice;
+                yourChoiceTemplate();
+                cin >> innerChoice;
+                while (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cin >> innerChoice;
+                }
+                gotoxy(0, 28);
+                if (innerChoice == "O" || innerChoice == "o" || innerChoice == "0") {
+                    for (int i = 0; i < 3; i++) {
+                        bronie[i] = weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
+                        pancerze[i] = armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
+                    }
+                } else if(innerChoice == "W" || innerChoice == "w") {
+                    isShopOpen = false;
+                } else {
+                    //kup jeœli ma pieni¹dze, daj zwrot 20% za aktualnie posiadan¹
+                    if (innerChoice.length() == 2) {
+                        char fLetter = innerChoice[0];
+                        int number = innerChoice[1] - '0';
+                        if (number >= 0 && number <= 2) {
+                            if (fLetter == 'P' || fLetter == 'p') { //pancerz
+                                if (getPlayer()->getMoney() >= pancerze[number].getPrice()) { //czy staæ
+                                    getPlayer()->setMoney(getPlayer()->getMoney() - pancerze[number].getPrice() + to2Decimal(getPlayer()->getArmor()->getPrice() * 0.2));
+                                    getPlayer()->setArmor(new armorBase(pancerze[number].getBaseProtection(), pancerze[number].getPrice()));
+                                    for (int i = 0; i < 3; i++) {
+                                        pancerze[i] = armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
+                                    }
+                                    cout << "Pomyœlnie zakupiono pancerz P" << number << "!\n";
+                                } else {
+                                    cout << "Nie masz wystarczaj¹cych œrodków na zakup pancerza P" << number << "!\n";
+                                }
+                            } else if (fLetter == 'B' || fLetter == 'b') { //broñ
+                                if (getPlayer()->getMoney() >= bronie[number].getPrice()) { //czy staæ
+                                    getPlayer()->setMoney(getPlayer()->getMoney() - bronie[number].getPrice() + to2Decimal(getPlayer()->getArmor()->getPrice() * 0.2));
+                                    getPlayer()->setWeapon(new weaponBase(bronie[number].getBaseDamage(), bronie[number].getCriticalChance(), bronie[number].getPrice()));
+                                    for (int i = 0; i < 3; i++) {
+                                        bronie[i] = weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
+                                    }
+                                    cout << "Pomyœlnie zakupiono broñ B" << number << "! Nie zapomnij zapisaæ gry :)\n";
+                                } else {
+                                    cout << "Nie masz wystarczaj¹cych œrodków na zakup broni B" << number << "! Nie zapomnij zapisaæ gry :)\n";
+                                }
+                            }
+                        }
+
+                    }
+                    this_thread::sleep_for(chrono::milliseconds(1000));
+                }
+            }
         } break;
         case 4:
             saveGame(sR.getUUID());
@@ -243,6 +349,5 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
             exit(0);
             break;
         }
-
     }
 }
