@@ -13,5 +13,6 @@ public:
 	void getMenu();
 	void exitGame();
 	void synchronize(const player& p);
+	void setColor(const int& color_l = 7);
 };
 

@@ -18,3 +18,8 @@ void gameUtilities::exitGame() {
 void gameUtilities::synchronize(const player& p) {
 	//#TODO
 }
+
+void gameUtilities::setColor(const int& color_l) {
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, color_l);
+}

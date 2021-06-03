@@ -18,9 +18,9 @@ int main() {
 	cout << "Fajna gra | " << settings.getAPIVersion() << "\n";
 	gameUtilities gUtilities;
 	gUtilities.getMenu();
-	cout << "Twój wybór:    ";
+	cout << "Twój wybór: ";
 	int temp;
-	cin >> setw(45) >> temp;
+	cin >> temp;
 	while (cin.fail() || temp < 1 || temp > 3) {
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -32,12 +32,32 @@ int main() {
 	system("cls");
 	switch (temp) {
 		case 1:
+			//tworzenie nowej postaci
 			{
 				gameEngine gE;
+				gE.saveGame(settings.getUUID());
+				cout << "Cześć, ";
+				gUtilities.setColor(11);
+				cout << gE.getPlayer()->getUsername() << "\n";
+				gUtilities.setColor();
+				this_thread::sleep_for(chrono::milliseconds(1000));
+				system("cls");
+				cout << *gE.getPlayer();
 			}
 			break;
 		case 2:
-			//tu będzie synchronizacja (ładowanie postaci)
+			//synchronizacja (ładowanie postaci)
+			{
+				gameEngine gE(settings.getUUID());
+				cout << "Cześć, ";
+				gUtilities.setColor(11);
+				cout << gE.getPlayer()->getUsername() << "\n";
+				gUtilities.setColor();
+				this_thread::sleep_for(chrono::milliseconds(1000));
+				system("cls");
+				cout << *gE.getPlayer();
+
+			}
 			break;
 		case 3:
 			gUtilities.exitGame();
