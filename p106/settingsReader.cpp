@@ -27,6 +27,7 @@ string gen_random(const int& len) {
 }
 
 string get_uuid() {
+	//generator UUID v4, nawet przechodzi walidacjê(!)
 	string res;
 	char temp;
 	switch (rand() % 4) {
@@ -88,10 +89,10 @@ settingsReader::settingsReader() {
 			string line;
 			while (getline(settingsFile, line)) {
 				if (regex_match(line, regex("[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}"))) {
-					//regex przeszed³, string to uuid
+					//regex przeszed³, string to uuid v4
 					uuid = line;
 				} else {
-					// ci¹g znaków to nie uuid, u¿ytkownik siê bawi³ z plikiem
+					// ci¹g znaków to nie uuid v4, u¿ytkownik siê bawi³ z plikiem
 					uuid = get_uuid();
 					ofstream settingsFileSave;
 					settingsFileSave.open(".settings");

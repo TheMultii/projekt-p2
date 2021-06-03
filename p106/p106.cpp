@@ -36,26 +36,14 @@ int main() {
 			{
 				gameEngine gE;
 				gE.saveGame(settings.getUUID());
-				cout << "Cześć, ";
-				gUtilities.setColor(11);
-				cout << gE.getPlayer()->getUsername() << "\n";
-				gUtilities.setColor();
-				this_thread::sleep_for(chrono::milliseconds(1000));
-				system("cls");
-				cout << *gE.getPlayer();
+				gE.play(settings, gUtilities);
 			}
 			break;
 		case 2:
 			//synchronizacja (ładowanie postaci)
 			{
 				gameEngine gE(settings.getUUID());
-				cout << "Cześć, ";
-				gUtilities.setColor(11);
-				cout << gE.getPlayer()->getUsername() << "\n";
-				gUtilities.setColor();
-				this_thread::sleep_for(chrono::milliseconds(1000));
-				system("cls");
-				cout << *gE.getPlayer();
+				gE.play(settings, gUtilities);
 
 			}
 			break;

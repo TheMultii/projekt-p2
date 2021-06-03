@@ -1,10 +1,17 @@
 #include "gameEngine.h"
+#include "gameUtilities.h"
+#include "settingsReader.h"
 #include <iostream>
+#include <random>
 #include <string>
 #include <curl/curl.h>
 #include <json/json.h>
 #include <iomanip>
+#include <thread>
+#include <chrono>
+#include <limits>
 #include <Windows.h>
+#undef max
 
 using namespace std;
 
@@ -104,7 +111,7 @@ void gameEngine::saveGame(const string& uuid) {
 
     curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
-    //system("cls");
+    system("cls");
     cout << "Trwa zapisywanie...\n";
     if (curl) {
         string url = "https://v4.api.mganczarczyk.pl/v4/projekt-p2/";
@@ -122,18 +129,120 @@ void gameEngine::saveGame(const string& uuid) {
     Json::CharReaderBuilder builder{};
     auto reader = unique_ptr<Json::CharReader>(builder.newCharReader());
     const auto is_parsed = reader->parse(readBuffer.c_str(), readBuffer.c_str() + readBuffer.length(), &obj, &errors);
-    //system("cls");
+    system("cls");
     if (is_parsed) {
-        
+        cout << "Zapisano!\n";
     } else {
-        cout << "Coœ siê zepsu³o przy zapisywaniu. :/";
+        cout << "Coœ siê zepsu³o przy zapisywaniu. :/\n";
     }
     curl_global_cleanup();
-    system("pause");
+    this_thread::sleep_for(chrono::milliseconds(1000));
 }
 
 // koniec zapisywania
 
-void gameEngine::loadGame(const std::string& uuid) {
-    //
+int randomRange(int min, int max) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distr(min, max);
+    return distr(gen);
+}
+
+void gotoxy(short x, short y) {
+    COORD coord = { x, y };
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+void yourChoiceTemplate() {
+    gotoxy(0, 20);
+    cout << "+ ----------------------------------------------------------------------------------------------- +\n";
+    cout << "|  Twój wybór | \n";
+    cout << "+ ----------------------------------------------------------------------------------------------- +\n";
+    gotoxy(98, 21);
+    cout << "|";
+    gotoxy(16, 21);
+}
+
+void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
+    boolean stopMainLoop = false;
+    int choice;
+    while (!stopMainLoop) {
+        system("cls");
+        cout << *getPlayer();
+        gotoxy(0, 3);
+        cout << "1. IdŸ na przygodê\n"
+             << "2. SprawdŸ ekwipunek\n"
+             << "3. IdŸ do sklepu\n"
+             << "4. Zapisz grê\n"
+             << "5. WyjdŸ z gry\n";
+
+        yourChoiceTemplate();
+        cin >> choice;
+        gotoxy(0, 23);
+        while (cin.fail() || choice < 1 || choice > 5) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\n|  To nie jest cyfra z zakresu 1-5, wpisz jeszcze raz | ";
+            this_thread::sleep_for(chrono::milliseconds(500));
+            cin >> choice;
+        }
+        switch (choice) {
+        case 1:
+        case 2:
+            cout << "\nJeszcze niezrobione. :<\n";
+            system("pause");
+            break;
+        case 3: {
+            system("cls");
+            cout << *getPlayer();
+            gotoxy(0, 3);
+            gU.setColor(15);
+            string powitania[8] = {
+                "Poka¿ mi swoje towary...",
+                "Czego potrzebujesz?",
+                "Reklama dŸwigni¹ handlu, tu reklamy nie ma",
+                "Zwrotów nie przyjmujemy",
+                "Broñ nie posiada atestów",
+                "Dobrze, ¿e nie widaæ, jaki ba³agan w tym sklepie",
+                "Programista p³aka³, jak pisa³",
+                "Gdzie lezie? Ma kase? Trzy tysi¹ce dukatów albo spadaj!"
+            };
+            cout << powitania[randomRange(0, 7)] << "\n";
+            gU.setColor();
+
+            gotoxy(0, 8);
+            cout << "+ ------------------------------------------- ";
+            gU.setColor(12);
+            cout << "BRONIE";
+            gU.setColor();
+            cout << " -------------------------------------------- + \n";
+            cout << "\n"; //content
+            cout << "+ ----------------------------------------------------------------------------------------------- + ";
+            
+            cout << "\n\n";
+            
+            cout << "+ ------------------------------------------ ";
+            gU.setColor(12);
+            cout << "PANCERZE";
+            gU.setColor();
+            cout << " ------------------------------------------- +\n";
+            cout << "\n"; //content
+            cout << "+ ----------------------------------------------------------------------------------------------- + ";
+
+            string innerChoice;
+            yourChoiceTemplate();
+            cin >> innerChoice;
+            gotoxy(0, 23);
+            system("pause");
+        } break;
+        case 4:
+            saveGame(sR.getUUID());
+            break;
+        case 5:
+            gU.exitGame();
+            exit(0);
+            break;
+        }
+
+    }
 }

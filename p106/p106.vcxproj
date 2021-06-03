@@ -152,11 +152,6 @@
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="gameUtilities.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
-    <ClInclude Include="resource2.h" />
-    <ClInclude Include="resource3.h" />
-    <ClInclude Include="resource4.h" />
     <ClInclude Include="resource5.h" />
     <ClInclude Include="settingsReader.h" />
     <ClInclude Include="weaponBase.h" />

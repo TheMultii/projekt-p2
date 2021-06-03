@@ -1,6 +1,8 @@
 #pragma once
 #include "player.h"
 #include <string>
+#include "settingsReader.h"
+#include "gameUtilities.h"
 
 class gameEngine {
 private:
@@ -11,6 +13,7 @@ public:
 
 	player* getPlayer();
 	void saveGame(const std::string& uuid);
-	void loadGame(const std::string& uuid);
+	void play(settingsReader& sR, gameUtilities& gU);
+
 };
 

@@ -61,18 +61,15 @@ void player::checkForNewLevel() {
 	}
 }
 
-int player::getXP()
-{
+int player::getXP() {
 	return xp;
 }
 
-int player::getXPNext()
-{
+int player::getXPNext() {
 	return xpToNextLevel;
 }
 
-int player::getLevel()
-{
+int player::getLevel() {
 	return level;
 }
 
@@ -97,7 +94,7 @@ void player::setArmor(armorBase* aB) {
 }
 
 void player::addXP(const int& val) {
-	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomnê to usun¹æ.
+	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomnê tego komentarza usun¹æ.
 	xp += val;
 	if (xp < 0)
 		xp = 0;
@@ -105,11 +102,20 @@ void player::addXP(const int& val) {
 }
 
 std::ostream& operator<<(std::ostream& o, const player& p) {
-	o << setfill('.') << setw(15) << std::right << p.username << "|";
-	o << setfill('.') << setw(10) << std::right << p.xp << "/" << p.xpToNextLevel << "XP|";
-	o << "WEP:" << setfill('.') << setw(15) << std::right << p.weapon->getBaseDamage() << "/" << p.weapon->getCriticalChance() << "/" << p.weapon->getPrice() << "$|";
-	o << "ARM:" << setfill('.') << setw(15) << std::right << p.armor->getBaseProtection() << "/" << p.armor->getPrice() << "$|";
-	o << "MON:" << setfill('.') << setw(15) << std::right << p.money << "$";
+	setColor(11);
+	o << setfill('.') << setw(15) << std::right << p.username << ", LV "<< p.level;
+	setColor();
+	o << "|";
+	setColor(12);
+	o << setfill('.') << setw(8) << std::right << p.health << "/" << p.maxHealth << "HP";
+	setColor();
+	o << "|";
+	o << setfill('.') << setw(8) << std::right << p.xp << "/" << p.xpToNextLevel << "XP|";
+	o << "WEP:" << setfill('.') << setw(8) << std::right << p.weapon->getBaseDamage() << "/" << p.weapon->getCriticalChance() << "/" << p.weapon->getPrice() << "$|";
+	o << "ARM:" << setfill('.') << setw(8) << std::right << p.armor->getBaseProtection() << "/" << p.armor->getPrice() << "$|";
+	setColor(2);
+	o << "MON:" << setfill('.') << setw(6) << std::right << p.money << "$";
+	setColor();
 
 	return o;
 }
