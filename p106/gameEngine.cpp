@@ -1,4 +1,4 @@
-#include "gameEngine.h"
+Ôªø#include "gameEngine.h"
 #include "gameUtilities.h"
 #include "settingsReader.h"
 #include <iostream>
@@ -34,7 +34,7 @@ gameEngine::gameEngine(const std::string& uuid) {
     curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
     system("cls");
-    cout << "Rozpoczynam synchronizacjÍ z serwerem...\n";
+    cout << "Rozpoczynam synchronizacjƒô z serwerem...\n";
     if (curl) {
         string url = "https://v4.api.mganczarczyk.pl/v4/projekt-p2/";
         url += uuid;
@@ -49,7 +49,7 @@ gameEngine::gameEngine(const std::string& uuid) {
     const auto is_parsed = reader->parse(readBuffer.c_str(), readBuffer.c_str() + readBuffer.length(), &obj, &errors);    system("cls");
     if (is_parsed) {
         if (obj.isMember("error")) {
-            cout << "[B£•D SERWERA] Nie uda≥o siÍ wczytaÊ postÍpÛw. Zamknij aplikacjÍ jeúli nie chcesz utraciÊ postÍpÛw, w przciwnym razie konto zostanie nadpisane profilem nowej gry.";
+            cout << "[B≈ÅƒÑD SERWERA] Nie uda≈Ço siƒô wczytaƒá postƒôp√≥w. Zamknij aplikacjƒô je≈ºli nie chcesz utraciƒá postƒôp√≥w, w przciwnym razie konto zostanie nadpisane profilem nowej gry.";
             system("pause");
             delete Player;
             Player = new player;
@@ -77,7 +77,7 @@ gameEngine::gameEngine(const std::string& uuid) {
             );
         }
     } else {
-        cout << "Nie uda≥o siÍ wczytaÊ postÍpÛw. Zamknij aplikacjÍ jeúli nie chcesz utraciÊ postÍpÛw, w przciwnym razie konto zostanie nadpisane profilem nowej gry.";
+        cout << "Nie uda≈Ço siƒô wczytaƒá postƒôp√≥w. Zamknij aplikacjƒô je≈ºli nie chcesz utraciƒá postƒôp√≥w, w przciwnym razie konto zostanie nadpisane profilem nowej gry.";
         system("pause");
         delete Player;
         Player = new player;
@@ -133,7 +133,7 @@ void gameEngine::saveGame(const string& uuid) {
     if (is_parsed) {
         cout << "Zapisano!\n";
     } else {
-        cout << "Coú siÍ zepsu≥o przy zapisywaniu. :/\n";
+        cout << "Co≈õ siƒô zepsu≈Ço przy zapisywaniu. :/\n";
     }
     curl_global_cleanup();
     this_thread::sleep_for(chrono::milliseconds(1000));
@@ -168,7 +168,7 @@ void gotoxy(short x, short y) {
 void yourChoiceTemplate() {
     gotoxy(0, 25);
     cout << "+ ----------------------------------------------------------------------------------------------- +\n";
-    cout << "|  TwÛj wybÛr | \n";
+    cout << "|  Tw√≥j wyb√≥r | \n";
     cout << "+ ----------------------------------------------------------------------------------------------- +\n";
     gotoxy(98, 26);
     cout << "|";
@@ -181,11 +181,11 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
         system("cls");
         cout << *getPlayer();
         gotoxy(0, 3);
-        cout << "1. Idü na przygodÍ\n"
-             << "2. Sprawdü ekwipunek\n"
-             << "3. Idü do sklepu\n"
-             << "4. Zapisz grÍ\n"
-             << "5. Wyjdü z gry\n";
+        cout << "1. Id≈∫ na przygodƒô\n"
+             << "2. Sprawd≈∫ ekwipunek\n"
+             << "3. Id≈∫ do sklepu\n"
+             << "4. Zapisz grƒô\n"
+             << "5. Wyjd≈∫ z gry\n";
 
         yourChoiceTemplate();
         cin >> choice;
@@ -218,14 +218,14 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()))
             };
             string powitania[8] = {
-                    "Pokaø mi swoje towary...",
+                    "Poka≈º mi swoje towary...",
                     "Czego potrzebujesz?",
-                    "Reklama düwigniπ handlu, ale tu reklamy nie ma.",
-                    "ZwrotÛw nie przyjmujemy.",
-                    "BroÒ nie posiada atestÛw.",
-                    "Dobrze, øe nie widaÊ, jaki ba≥agan w tym sklepie.",
-                    "Programista p≥aka≥, jak pisa≥.",
-                    "Gdzie lezie? Ma kase? Trzy tysiπce dukatÛw albo spadaj!"
+                    "Reklama d≈∫wigniƒÖ handlu, ale tu reklamy nie ma.",
+                    "Zwrot√≥w nie przyjmujemy.",
+                    "Bro≈Ñ nie posiada atest√≥w.",
+                    "Dobrze, ≈ºe nie widaƒá, jaki ba≈Çagan w tym sklepie.",
+                    "Programista p≈Çaka≈Ç, jak pisa≈Ç.",
+                    "Gdzie lezie? Ma kase? Trzy tysiƒÖce dukat√≥w albo spadaj!"
             };
             string powitanie = powitania[randomRange(0, 7)];
             boolean isShopOpen = true;
@@ -287,7 +287,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 cout << "+ ----------------------------------------------------------------------------------------------- +\n\n\n\n";
 
                 gU.setColor(15);
-                cout << "W - wyjdü; B0,B1,B2,P0,P1,P2 - kup odpowiedniπ broÒ/pancerz, O - odúwieø ofertÍ sklepu";
+                cout << "W - wyjd≈∫; B0,B1,B2,P0,P1,P2 - kup odpowiedniƒÖ bro≈Ñ/pancerz, O - od≈õwie≈º ofertƒô sklepu";
                 gU.setColor();
                 string innerChoice;
                 yourChoiceTemplate();
@@ -306,32 +306,32 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 } else if(innerChoice == "W" || innerChoice == "w") {
                     isShopOpen = false;
                 } else {
-                    //kup jeúli ma pieniπdze, daj zwrot 20% za aktualnie posiadanπ
+                    //kup je≈õli ma pieniƒÖdze, daj zwrot 20% za aktualnie posiadanƒÖ
                     if (innerChoice.length() == 2) {
                         char fLetter = innerChoice[0];
                         int number = innerChoice[1] - '0';
                         if (number >= 0 && number <= 2) {
                             if (fLetter == 'P' || fLetter == 'p') { //pancerz
-                                if (getPlayer()->getMoney() >= pancerze[number].getPrice()) { //czy staÊ
+                                if (getPlayer()->getMoney() >= pancerze[number].getPrice()) { //czy staƒá
                                     getPlayer()->setMoney(getPlayer()->getMoney() - pancerze[number].getPrice() + to2Decimal(getPlayer()->getArmor()->getPrice() * 0.2));
                                     getPlayer()->setArmor(new armorBase(pancerze[number].getBaseProtection(), pancerze[number].getPrice()));
                                     for (int i = 0; i < 3; i++) {
                                         pancerze[i] = armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
                                     }
-                                    cout << "Pomyúlnie zakupiono pancerz P" << number << "!\n";
+                                    cout << "Pomy≈õlnie zakupiono pancerz P" << number << "! Nie zapomnij zapisaƒá gry :)\n";
                                 } else {
-                                    cout << "Nie masz wystarczajπcych úrodkÛw na zakup pancerza P" << number << "!\n";
+                                    cout << "Nie masz wystarczajƒÖcych ≈õrodk√≥w na zakup pancerza P" << number << "!\n";
                                 }
-                            } else if (fLetter == 'B' || fLetter == 'b') { //broÒ
-                                if (getPlayer()->getMoney() >= bronie[number].getPrice()) { //czy staÊ
+                            } else if (fLetter == 'B' || fLetter == 'b') { //bro≈Ñ
+                                if (getPlayer()->getMoney() >= bronie[number].getPrice()) { //czy staƒá
                                     getPlayer()->setMoney(getPlayer()->getMoney() - bronie[number].getPrice() + to2Decimal(getPlayer()->getArmor()->getPrice() * 0.2));
                                     getPlayer()->setWeapon(new weaponBase(bronie[number].getBaseDamage(), bronie[number].getCriticalChance(), bronie[number].getPrice()));
                                     for (int i = 0; i < 3; i++) {
                                         bronie[i] = weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
                                     }
-                                    cout << "Pomyúlnie zakupiono broÒ B" << number << "! Nie zapomnij zapisaÊ gry :)\n";
+                                    cout << "Pomy≈õlnie zakupiono bro≈Ñ B" << number << "! Nie zapomnij zapisaƒá gry :)\n";
                                 } else {
-                                    cout << "Nie masz wystarczajπcych úrodkÛw na zakup broni B" << number << "! Nie zapomnij zapisaÊ gry :)\n";
+                                    cout << "Nie masz wystarczajƒÖcych ≈õrodk√≥w na zakup broni B" << number << "!\n";
                                 }
                             }
                         }
