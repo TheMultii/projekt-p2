@@ -40,7 +40,7 @@ player::player() {
 	system("cls");
 }
 
-player::player(const std::string& username, const int& level, const int& xp, const double& money, const double& weapon_bD, const double& weapon_cC, const double& weapon_p, const double& armor_bP, const double& armor_p) {
+player::player(const std::string& username, const int& level, const int& xp, const double& money, const double& weapon_bD, const double& weapon_cC, const double& weapon_p, const double& armor_bP, const double& armor_p, const int& smallPotions, const int& bigPotions) {
 	this->username = username;
 	this->level = level;
 	this->xp = xp;
@@ -49,15 +49,63 @@ player::player(const std::string& username, const int& level, const int& xp, con
 	this->armor = new armorBase(armor_bP, armor_p);
 	this->xpToNextLevel = 50 * this->level;
 	this->maxHealth = this->health = 50 * this->level;
+
+	if (smallPotions + bigPotions > 15) {
+		cout << "\nIloœæ potek siê nie zgadza, ustawiam na 10 ma³ych, 5 du¿ych...\n";
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (potki[j] == NULL) {
+					potki[j] = new smallPotion;
+					break;
+				}
+			}
+		}
+
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (potki[j] == NULL) {
+					potki[j] = new bigPotion;
+					break;
+				}
+			}
+		}
+	} else {
+		for (int i = 0; i < smallPotions; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (potki[j] == NULL) {
+					//cout << "tworze s" << i << "\n";
+					potki[j] = new smallPotion;
+					break;
+				}
+				
+			}
+		}
+
+		for (int i = 0; i < bigPotions; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (potki[j] == NULL) {
+					//cout << "tworze b" << i << "\n";
+					potki[j] = new bigPotion;
+					break;
+				}
+			}
+		}
+	}
 	system("cls");
 }
 
-void player::checkForNewLevel() {
+void player::checkForNewLevel(const bool& drukuj) {
 	if (xp >= xpToNextLevel) {
 		xp = 0;
 		level++;
 		xpToNextLevel = level * 50;
 		maxHealth = health = level * 50;
+		if (drukuj) {
+			setColor(12);
+			cout << "\nNowy poziom!";
+			setColor();
+			cout << "(LV" << level << ")\n";
+		}
 	}
 }
 
@@ -85,8 +133,33 @@ armorBase* player::getArmor() {
 	return armor;
 }
 
+double player::getHealth() {
+	return health;
+}
+
+double player::getMaxHealth() {
+	return maxHealth;
+}
+
+
 std::string player::getUsername() {
 	return username;
+}
+
+Potion** player::getPotions() {
+	return potki;
+}
+
+int player::getPotionsCount(std::string type) {
+	int ret = 0;
+	for (int i = 0; i < 15; i++) {
+		if (potki[i] != NULL) {
+			if (potki[i]->getType() == type) {
+				ret++;
+			}
+		}
+	}
+	return ret;
 }
 
 void player::setWeapon(weaponBase* wB) {
@@ -103,12 +176,12 @@ void player::setMoney(const double& money) {
 	this->money = money;
 }
 
-void player::addXP(const int& val) {
+void player::addXP(const int& val, const bool& drukuj) {
 	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomnê tego komentarza usun¹æ.
 	xp += val;
 	if (xp < 0)
 		xp = 0;
-	checkForNewLevel();
+	checkForNewLevel(drukuj);
 }
 
 std::ostream& operator<<(std::ostream& o, const player& p) {
@@ -124,8 +197,19 @@ std::ostream& operator<<(std::ostream& o, const player& p) {
 	o << "WEP:" << setfill('.') << setw(8) << std::right << p.weapon->getBaseDamage() << "/" << (p.weapon->getCriticalChance() * 100) << "%/" << p.weapon->getPrice() << "$|";
 	o << "ARM:" << setfill('.') << setw(8) << std::right << p.armor->getBaseProtection() << "/" << p.armor->getPrice() << "$|";
 	setColor(2);
-	o << "MON:" << setfill('.') << setw(6) << std::right << p.money << "$";
+	o << "MON:" << setfill('.') << setw(6) << std::right << p.money << "$|";
 	setColor();
+	int sP = 0, bP = 0;
+	for (int i = 0; i < 15; i++) {
+		if (p.potki[i] != NULL) {
+			if (p.potki[i]->getType() == "smallPotion") {
+				sP++;
+			} else {
+				bP++;
+			}
+		}
+	}
+	o << "M:" << setfill('.') << setw(2) << std::right << sP << ", D:" << setfill('.') << setw(2) << std::right << bP;
 
 	return o;
 }

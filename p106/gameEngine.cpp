@@ -25,7 +25,6 @@ gameEngine::gameEngine() {
 }
 
 gameEngine::gameEngine(const std::string& uuid) {
-    //Player = new player("", 0, 0, 0, 0, 0, 0, 0, 0);
     CURL* curl;
     CURLcode res;
     string readBuffer, errors{};
@@ -64,6 +63,8 @@ gameEngine::gameEngine(const std::string& uuid) {
             double weapon_price = obj["weapon_price"].asDouble();
             double armor_baseProtection = obj["armor_baseProtection"].asDouble();
             double armor_price = obj["armor_price"].asDouble();
+            int smallPotions = obj["smallPotions"].asInt();
+            int bigPotions = obj["bigPotions"].asInt();
             Player = new player(
                 username,
                 level,
@@ -73,7 +74,9 @@ gameEngine::gameEngine(const std::string& uuid) {
                 weapon_critChance,
                 weapon_price,
                 armor_baseProtection,
-                armor_price
+                armor_price,
+                smallPotions,
+                bigPotions
             );
         }
     } else {
@@ -86,7 +89,7 @@ gameEngine::gameEngine(const std::string& uuid) {
 
 // zapsiywanie
 
-string generatePostBody(string imie, int level, int xp, double money, double weapon_price, double armor_price, double weapon_critChance, double weapon_baseDamage, double armor_baseProtection) {
+string generatePostBody(string imie, int level, int xp, double money, double weapon_price, double armor_price, double weapon_critChance, double weapon_baseDamage, double armor_baseProtection, int smallPotions, int bigPotions) {
     string str = "username=" + imie
         + "&level=" + to_string(level)
         + "&xp=" + to_string(xp)
@@ -95,7 +98,9 @@ string generatePostBody(string imie, int level, int xp, double money, double wea
         + "&armor_price=" + to_string(armor_price)
         + "&weapon_critChance=" + to_string(weapon_critChance)
         + "&weapon_baseDamage=" + to_string(weapon_baseDamage)
-        + "&armor_baseProtection=" + to_string(armor_baseProtection);
+        + "&armor_baseProtection=" + to_string(armor_baseProtection)
+        + "&smallPotions=" + to_string(smallPotions)
+        + "&bigPotions=" + to_string(bigPotions);
     return str;
 }
 
@@ -119,7 +124,7 @@ void gameEngine::saveGame(const string& uuid) {
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_POST, 1);
-        string body = generatePostBody(Player->getUsername(), Player->getLevel(), Player->getXP(), Player->getMoney(), Player->getWeapon()->getPrice(), Player->getArmor()->getPrice(), Player->getWeapon()->getCriticalChance(), Player->getWeapon()->getBaseDamage(), Player->getArmor()->getBaseProtection());
+        string body = generatePostBody(Player->getUsername(), Player->getLevel(), Player->getXP(), Player->getMoney(), Player->getWeapon()->getPrice(), Player->getArmor()->getPrice(), Player->getWeapon()->getCriticalChance(), Player->getWeapon()->getBaseDamage(), Player->getArmor()->getBaseProtection(), Player->getPotionsCount("smallPotion"), Player->getPotionsCount("bigPotion"));
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
 
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -199,12 +204,140 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
         }
         switch (choice) {
         case 1:
-            cout << "\nJeszcze niezrobione. :<\n";
-            system("pause");
+            {
+            bool isGameOnGoing = true;
+            while (isGameOnGoing) {
+                system("cls");
+                cout << *getPlayer() << "\n";
+                int msToAction = randomRange(1000, 5500);
+                cout << "\nSzukasz wyzwania";
+                for (int i = 0; i < 6; i++) {
+                    cout << ".";
+                    this_thread::sleep_for(chrono::milliseconds(msToAction/6));
+                }
+                int randomAction = randomRange(0, 100);
+                if (randomAction < 20) {
+                    //potka, jeśli nie ma miejsca, to pieniądze 1$/2$
+                    cout << "\nZnalazłeś potkę";
+                    int pozycja = 0;
+                    for (int pozycja = 0; pozycja < 15; pozycja++) {
+                        if (getPlayer()->getPotions()[pozycja] == NULL) {
+                            break;
+                        }
+                        if (pozycja == 14) {
+                            pozycja = -1;
+                        }
+                    }
+                    if (pozycja != -1) {
+                        cout << "! ";
+                        this_thread::sleep_for(chrono::milliseconds(500));
+                        cout << "Przyjrzałeś się bliżej i jest to ";
+                        Potion* wsk = NULL;
+                        if (randomAction % 3 == 0) {
+                            gU.setColor(2);
+                            cout << "DUŻA POTKA!";
+                            gU.setColor();
+                            bigPotion* bigPotka = new bigPotion;
+                            getPlayer()->getPotions()[pozycja] = bigPotka;
+                            //duża
+                        } else {
+                            gU.setColor(10);
+                            cout << "MAŁA POTKA!";
+                            gU.setColor();
+                            smallPotion* bigPotka = new smallPotion;
+                            getPlayer()->getPotions()[pozycja] = bigPotka;
+                            //mała
+                        }
+                    } else {
+                        cout << ", ale nie masz na nią miejsca w ekwpinku, więc dostaniesz rekompensatę w wysokości ";
+                        if (randomAction % 3 == 0) {
+                            cout << "2$";
+                            getPlayer()->setMoney(getPlayer()->getMoney() + 2.0);
+                            //duża
+                        } else {
+                            cout << "1$";
+                            getPlayer()->setMoney(getPlayer()->getMoney() + 1.0);
+                            //mała
+                        }
+                    }
+                } else if (randomAction > 80) {
+                    cout << "\n\n\nChęci były, ale nic nie znalazłeś.\n\nNie smuć się, dostaniesz rekompensatę w wysokości ";
+                    gU.setColor(11);
+                    int randomXP = randomRange(1, 6);
+                    cout << randomXP << "XP!\n";
+                    gU.setColor();
+                    getPlayer()->addXP(randomXP, true);
+                } else {
+                    //bitka
+
+                    //#TODO
+
+                }
+                cout << "\n";
+                system("pause && cls");
+                cout << *getPlayer() << "\n\n"
+                    << "Napotkani podróżni mówią ci, że wyglądasz na zmęczonego. Patrzysz na nich i odpowiadasz...\n\n"
+                    << "1) OK, wracam.\n2) Toż to nieprawda! Kontynuję podróż!\n\n";
+                int innerChoice;
+                yourChoiceTemplate();
+                cin >> innerChoice;
+                while (cin.fail() || innerChoice < 1 || innerChoice > 2) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "\n|  To nie jest cyfra z zakresu 1-2, wpisz jeszcze raz | ";
+                    cin >> innerChoice;
+                }
+                gotoxy(0, 28);
+                if(innerChoice == 1)
+                    isGameOnGoing = false;
+            }
+            }
             break;
         case 2:
-            
+            {
+            system("cls");
+            cout << *getPlayer() << "\n";
+
+            //żyćko
+            cout << "+ -- Życie -- +\n"
+                 << "  " << getPlayer()->getHealth() << "/" << getPlayer()->getMaxHealth() << "HP\n"
+                 << "+ ----------- +\n\n\n";
+
+            //broń
+            cout << "+ -- Broń -- +\n"
+                 << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getBaseDamage() << " DMG\n"
+                 << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getCriticalChance() * 100 << "[%] CRIT CHANCE\n"
+                 << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getPrice() << "$\n"
+                 << "+ ---------- +\n\n\n";
+
+            //armor
+            cout << "+ -- Armor -- +\n"
+                 << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getBaseProtection() << " PROT\n"
+                 << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getPrice() << "$\n"
+                 << "+ ----------- +\n\n\n";
+
+            //potki
+            cout << "+ -- Potki -- +\n";
+            int bP = 0, sP = 0;
+            for (int i = 0; i < 15; i++) {
+                if (getPlayer()->getPotions()[i] != NULL) {
+                    if (getPlayer()->getPotions()[i]->getType() == "smallPotion") {
+                        sP++;
+                    } else {
+                        bP++;
+                    }
+                }
+            }
+            cout << "  M: " << sP << ", D: " << bP << "\n"
+                 << "+ ----------- +\n\n\n";
+
+            //dolary, złotówki, eurogąbki
+            cout << "+ -- Pieniądze -- +\n"
+                 << "  " << getPlayer()->getMoney() << "$\n"
+                 << "+ --------------- +\n\n\n";
+
             system("pause");
+            }
             break;
         case 3: {
             weaponBase bronie[] = {

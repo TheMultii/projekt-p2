@@ -44,7 +44,6 @@ int main() {
 			{
 				gameEngine gE(settings.getUUID());
 				gE.play(settings, gUtilities);
-
 			}
 			break;
 		case 3:
