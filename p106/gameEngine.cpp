@@ -219,33 +219,35 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 if (randomAction < 20) {
                     //potka, jeśli nie ma miejsca, to pieniądze 1$/2$
                     cout << "\nZnalazłeś potkę";
-                    int pozycja = 0;
+                    int poz;
                     for (int pozycja = 0; pozycja < 15; pozycja++) {
                         if (getPlayer()->getPotions()[pozycja] == NULL) {
+                            poz = pozycja;
                             break;
                         }
                         if (pozycja == 14) {
-                            pozycja = -1;
+                            poz = -1;
                         }
                     }
-                    if (pozycja != -1) {
+                    cout << poz;
+                    if (poz != -1) {
                         cout << "! ";
                         this_thread::sleep_for(chrono::milliseconds(500));
                         cout << "Przyjrzałeś się bliżej i jest to ";
-                        Potion* wsk = NULL;
                         if (randomAction % 3 == 0) {
                             gU.setColor(2);
                             cout << "DUŻA POTKA!";
                             gU.setColor();
                             bigPotion* bigPotka = new bigPotion;
-                            getPlayer()->getPotions()[pozycja] = bigPotka;
+                            getPlayer()->getPotions()[poz] = bigPotka;
                             //duża
                         } else {
                             gU.setColor(10);
                             cout << "MAŁA POTKA!";
                             gU.setColor();
-                            smallPotion* bigPotka = new smallPotion;
-                            getPlayer()->getPotions()[pozycja] = bigPotka;
+                            smallPotion* smallPotka = new smallPotion;
+                            cout << "\n\nwklejanie" << poz << "\n" << getPlayer()->getPotions()[poz];
+                            getPlayer()->getPotions()[poz] = smallPotka;
                             //mała
                         }
                     } else {

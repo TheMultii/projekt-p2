@@ -204,7 +204,7 @@ std::ostream& operator<<(std::ostream& o, const player& p) {
 		if (p.potki[i] != NULL) {
 			if (p.potki[i]->getType() == "smallPotion") {
 				sP++;
-			} else {
+			} else if (p.potki[i]->getType() == "bigPotion") {
 				bP++;
 			}
 		}
