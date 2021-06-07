@@ -94,6 +94,15 @@ player::player(const std::string& username, const int& level, const int& xp, con
 	system("cls");
 }
 
+player::~player() {
+	delete armor;
+	delete weapon;
+	for (int i = 0; i < 15; i++) {
+		delete potki[i];
+	}
+	delete potki;
+}
+
 void player::checkForNewLevel(const bool& drukuj) {
 	if (xp >= xpToNextLevel) {
 		xp = 0;
@@ -162,6 +171,19 @@ int player::getPotionsCount(std::string type) {
 	return ret;
 }
 
+void player::usePotion(std::string type) {
+	bool isSearching = true;
+	for (int i = 14; i >= 0 && isSearching; i--) {
+		if (potki[i] != NULL) {
+			if (potki[i]->getType() == type) {
+				setHealth(getHealth() + potki[i]->getHealth());
+				delete potki[i];
+				isSearching = false;
+			}
+		}
+	}
+}
+
 void player::setWeapon(weaponBase* wB) {
 	delete weapon;
 	weapon = wB;
@@ -174,6 +196,12 @@ void player::setArmor(armorBase* aB) {
 
 void player::setMoney(const double& money) {
 	this->money = money;
+}
+
+void player::setHealth(const double& hp) {
+	health = hp;
+	if (health > getMaxHealth())
+		health = getMaxHealth();
 }
 
 void player::addXP(const int& val, const bool& drukuj) {

@@ -23,6 +23,7 @@ private:
 public:
 	player();
 	player(const std::string& username, const int& level, const int& xp, const double& money, const double& weapon_bD, const double& weapon_cC, const double& weapon_p, const double& armor_bP, const double& armor_p, const int& smallPotions, const int& bigPotions); //konstruktor dla wczytywania gry
+	~player();
 
 	void checkForNewLevel(const bool& drukuj);
 
@@ -38,10 +39,12 @@ public:
 
 	Potion** getPotions();
 	int getPotionsCount(std::string type);
+	void usePotion(std::string type);
 
 	void setWeapon(weaponBase* wB);
 	void setArmor(armorBase* aB);
 	void setMoney(const double& money);
+	void setHealth(const double& hp);
 	
 	void addXP(const int& val, const bool& drukuj = false);
 };

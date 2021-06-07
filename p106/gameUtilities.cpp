@@ -12,11 +12,7 @@ void gameUtilities::getMenu() {
 
 void gameUtilities::exitGame() {
 	system("cls");
-	cout << "Dziękuję za grę <3";
-}
-
-void gameUtilities::synchronize(const player& p) {
-	//#TODO
+	cout << "Dziękuję za grę <3\n\n";
 }
 
 void gameUtilities::setColor(const int& color_l) {

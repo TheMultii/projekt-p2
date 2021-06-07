@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="armorBase.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="gameUtilities.cpp" />
     <ClCompile Include="p106.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armorBase.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="gameUtilities.h" />
     <ClInclude Include="player.h" />

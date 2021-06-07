@@ -16,4 +16,3 @@ public:
 	void play(settingsReader& sR, gameUtilities& gU);
 
 };
-

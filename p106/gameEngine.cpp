@@ -1,6 +1,7 @@
 ﻿#include "gameEngine.h"
 #include "gameUtilities.h"
 #include "settingsReader.h"
+#include "enemy.h"
 #include <iostream>
 #include <random>
 #include <string>
@@ -21,7 +22,7 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 }
 
 gameEngine::gameEngine() {
-	 Player = new player;
+    Player = new player;
 }
 
 gameEngine::gameEngine(const std::string& uuid) {
@@ -47,8 +48,9 @@ gameEngine::gameEngine(const std::string& uuid) {
     auto reader = unique_ptr<Json::CharReader>(builder.newCharReader());
     const auto is_parsed = reader->parse(readBuffer.c_str(), readBuffer.c_str() + readBuffer.length(), &obj, &errors);    system("cls");
     if (is_parsed) {
-        if (obj.isMember("error")) {
-            cout << "[BŁĄD SERWERA] Nie udało się wczytać postępów. Zamknij aplikację jeżli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.";
+        if (!obj.size()) {
+            //serwer zwrócił np. 500 (wtedy coś zepsułem i muszę to naprawić :/) lub zapis w bazie nie istnieje
+            cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.\n\n";
             system("pause");
             delete Player;
             Player = new player;
@@ -80,7 +82,7 @@ gameEngine::gameEngine(const std::string& uuid) {
             );
         }
     } else {
-        cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.";
+        cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.\n\n";
         system("pause");
         delete Player;
         Player = new player;
@@ -187,10 +189,10 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
         cout << *getPlayer();
         gotoxy(0, 3);
         cout << "1. Idź na przygodę\n"
-             << "2. Sprawdź ekwipunek\n"
-             << "3. Idź do sklepu\n"
-             << "4. Zapisz grę\n"
-             << "5. Wyjdź z gry\n";
+            << "2. Sprawdź ekwipunek\n"
+            << "3. Idź do sklepu\n"
+            << "4. Zapisz grę\n"
+            << "5. Wyjdź z gry\n";
 
         yourChoiceTemplate();
         cin >> choice;
@@ -204,7 +206,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
         }
         switch (choice) {
         case 1:
-            {
+        {
             bool isGameOnGoing = true;
             while (isGameOnGoing) {
                 system("cls");
@@ -213,7 +215,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 cout << "\nSzukasz wyzwania";
                 for (int i = 0; i < 6; i++) {
                     cout << ".";
-                    this_thread::sleep_for(chrono::milliseconds(msToAction/6));
+                    this_thread::sleep_for(chrono::milliseconds(msToAction / 6));
                 }
                 int randomAction = randomRange(0, 100);
                 if (randomAction < 20) {
@@ -229,7 +231,6 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                             poz = -1;
                         }
                     }
-                    cout << poz;
                     if (poz != -1) {
                         cout << "! ";
                         this_thread::sleep_for(chrono::milliseconds(500));
@@ -246,7 +247,6 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                             cout << "MAŁA POTKA!";
                             gU.setColor();
                             smallPotion* smallPotka = new smallPotion;
-                            cout << "\n\nwklejanie" << poz << "\n" << getPlayer()->getPotions()[poz];
                             getPlayer()->getPotions()[poz] = smallPotka;
                             //mała
                         }
@@ -271,15 +271,152 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                     getPlayer()->addXP(randomXP, true);
                 } else {
                     //bitka
+                    gU.setColor(12);
+                    cout << "\n\nNapotkałeś przeciwnika!\n";
+                    gU.setColor();
+                    enemy* przeciwnik = new enemy(to2Decimal(randomRangeDouble(10, 50)), to2Decimal(randomRangeDouble(1.25, 2.5)));
+                    cout << "Jest to: " << przeciwnik->getName() << " " << *przeciwnik;
+                    cout << "\n\nCo robisz?\n1) Walczę!\n2) Próbuję uciec (40% szansy)";
+                    int innerChoice;
+                    bool isRetreatPossible = randomRange(1, 10) <= 4;
+                    yourChoiceTemplate();
+                    cin >> innerChoice;
+                    while (cin.fail() || innerChoice < 1 || innerChoice > 2) {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "\n|  To nie jest cyfra z zakresu 1-2, wpisz jeszcze raz | ";
+                        cin >> innerChoice;
+                    }
+                    gotoxy(0, 28);
+                    if (innerChoice == 2) {
+                        if (isRetreatPossible) {
+                            system("cls");
+                            cout << *getPlayer();
+                            cout << "\n\nUdało ci się uciec!";
+                        } else {
+                            system("cls");
+                            cout << *getPlayer();
+                            cout << "\n\nNie udało ci się uciec!";
+                        }
+                        this_thread::sleep_for(chrono::milliseconds(1500));
+                    }
+                    if (innerChoice == 1 || (innerChoice == 2 && !isRetreatPossible)) {
+                        //walka
+                        bool yourTurn = true;
+                        string innerGameChoice;
+                        while (przeciwnik->isAlive()) {
+                            system("cls");
+                            cout << *getPlayer() << "\n\n"<< przeciwnik->getName() <<": " << *przeciwnik << "\n\n";
+                            gU.setColor(2);
+                            przeciwnik->twarz();
+                            gU.setColor();
+                            cout << "\n\n";
 
-                    //#TODO
+                            if (yourTurn) {
+                                //akcja gracza
+                                //templatka wyżej z możliwościami - potka mała, duża, atak, nic nie rób
+                                gotoxy(0, 24);
+                                gU.setColor(15);
+                                cout << "M - mała potka; D - duża potka; W - walcz; N - nic nie rób";
+                                gU.setColor();
 
+                                yourChoiceTemplate();
+                                cin >> innerGameChoice;
+                                //sprawdz cin
+                                bool isChecked = false;
+                                while (!isChecked && (innerGameChoice == "m" || innerGameChoice == "M" || innerGameChoice == "d" || innerGameChoice == "D")) {
+                                    //sprawdz czy potka istnieje
+                                    if (getPlayer()->getPotionsCount(innerGameChoice == "m" || innerGameChoice == "M"?"smallPotion":"bigPotion")) {
+                                        isChecked = true;
+                                    } else {
+                                        cin.clear();
+                                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                        cout << "\n|  Nie masz takiej potki, wpisz jeszcze raz swój wybór | ";
+                                        cin >> innerGameChoice;
+                                    }
+                                }
+                                while (cin.fail() || (innerGameChoice != "m" && innerGameChoice != "M" && innerGameChoice != "d" && innerGameChoice != "D" && innerGameChoice != "w" && innerGameChoice != "W" && innerGameChoice != "n" && innerGameChoice != "N")) {
+                                    cin.clear();
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                    cout << "\n|  To nie jest poprawna opcja, wpisz jeszcze raz | ";
+                                    cin >> innerGameChoice;
+                                }
+                                gotoxy(0, 28);
+                                if (innerGameChoice == "m" || innerGameChoice == "M" || innerGameChoice == "d" || innerGameChoice == "D") {
+                                    getPlayer()->usePotion(innerGameChoice == "m" || innerGameChoice == "M" ? "smallPotion" : "bigPotion");
+                                } else if (innerGameChoice == "w" || innerGameChoice == "W") {
+                                    double base_temp = getPlayer()->getWeapon()->getBaseDamage();
+                                    double damageInflicted = to2Decimal(randomRangeDouble((base_temp * 0.8), (base_temp * 1.2)));
+                                    bool isCritical = (getPlayer()->getWeapon()->getCriticalChance() * 100) > randomRangeDouble(0, 100);
+                                    if (isCritical)
+                                        damageInflicted *= 2;
+                                    cout << "Zaatakowałeś " << przeciwnik->getName() << ". Zadałeś mu " << damageInflicted << " obrażeń.";
+                                    if (isCritical) {
+                                        gU.setColor(6);
+                                        cout << " Był to critical! (DMGx2)";
+;                                       gU.setColor();
+                                    }
+                                    przeciwnik->setHealth(przeciwnik->getHealth() - damageInflicted);
+                                    cout << " Zostało mu " << przeciwnik->getHealth() << "HP\n";
+                                }
+                                system("pause");
+                                if (!przeciwnik->isAlive()) {
+                                    gU.setColor(12);
+                                    cout << "\nPokonałeś "<< przeciwnik->getName() <<"!\n";
+                                    gU.setColor();
+                                    double randomMoney = to2Decimal(randomRangeDouble(0.8, 2.5));
+                                    int randomXP = randomRange(1, 10);
+                                    cout << "Zdobyłeś: ";
+                                    gU.setColor(11);
+                                    cout << randomXP << "XP";
+                                    gU.setColor();
+                                    cout << ", ";
+                                    gU.setColor(10);
+                                    cout << randomMoney << "$\n";
+                                    gU.setColor();
+                                    getPlayer()->addXP(randomXP);
+                                    getPlayer()->setMoney(getPlayer()->getMoney() + randomMoney);
+                                }
+                                yourTurn = !yourTurn;
+                            } else {
+                                //atak przeciwnika
+                                double base_temp = przeciwnik->getDamage();
+                                double damageInflicted = to2Decimal(randomRangeDouble((base_temp * 0.8), (base_temp * 1.2)));
+                                damageInflicted = to2Decimal(damageInflicted * ((100.0 - getPlayer()->getArmor()->getBaseProtection()) / 100));
+                                cout << "Zaatakował cię " << przeciwnik->getName() << ". Zadał ci " << damageInflicted << " obrażeń.";
+                                getPlayer()->setHealth(getPlayer()->getHealth() - damageInflicted);
+                                cout << " Zostało ci " << getPlayer()->getHealth() << "HP.\n";
+                                system("pause");
+
+                                if (getPlayer()->getHealth() <= 0) {
+                                    system("cls");
+                                    gU.setColor(12);
+                                    cout << "PRZEGRAŁEŚ!\n\n";
+                                    gU.setColor();
+                                    cout << "Pokanał cię " << przeciwnik->getName() << *przeciwnik << "\n\n";
+                                    gU.setColor(2);
+                                    przeciwnik->twarz();
+                                    gU.setColor();
+                                    cout << "\n\n";
+                                    system("pause");
+                                }
+                                yourTurn = !yourTurn;
+                            }
+                        }
+
+                    }
+                    //koniec walki/ucieczka
+                    delete przeciwnik;
+                    if (getPlayer()->getHealth() <= 0) {
+                        gU.exitGame();
+                        exit(0);
+                    }
                 }
                 cout << "\n";
                 system("pause && cls");
                 cout << *getPlayer() << "\n\n"
                     << "Napotkani podróżni mówią ci, że wyglądasz na zmęczonego. Patrzysz na nich i odpowiadasz...\n\n"
-                    << "1) OK, wracam.\n2) Toż to nieprawda! Kontynuję podróż!\n\n";
+                    << "1) Toż to nieprawda! Kontynuję podróż!\n2) OK, wracam.\n\n";
                 int innerChoice;
                 yourChoiceTemplate();
                 cin >> innerChoice;
@@ -290,33 +427,33 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                     cin >> innerChoice;
                 }
                 gotoxy(0, 28);
-                if(innerChoice == 1)
+                if (innerChoice == 2)
                     isGameOnGoing = false;
             }
-            }
-            break;
+        }
+        break;
         case 2:
-            {
+        {
             system("cls");
             cout << *getPlayer() << "\n";
 
             //żyćko
             cout << "+ -- Życie -- +\n"
-                 << "  " << getPlayer()->getHealth() << "/" << getPlayer()->getMaxHealth() << "HP\n"
-                 << "+ ----------- +\n\n\n";
+                << "  " << getPlayer()->getHealth() << "/" << getPlayer()->getMaxHealth() << "HP\n"
+                << "+ ----------- +\n\n\n";
 
             //broń
             cout << "+ -- Broń -- +\n"
-                 << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getBaseDamage() << " DMG\n"
-                 << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getCriticalChance() * 100 << "[%] CRIT CHANCE\n"
-                 << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getPrice() << "$\n"
-                 << "+ ---------- +\n\n\n";
+                << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getBaseDamage() << " DMG\n"
+                << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getCriticalChance() * 100 << "[%] CRIT CHANCE\n"
+                << "  " << fixed << setprecision(2) << getPlayer()->getWeapon()->getPrice() << "$\n"
+                << "+ ---------- +\n\n\n";
 
             //armor
             cout << "+ -- Armor -- +\n"
-                 << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getBaseProtection() << " PROT\n"
-                 << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getPrice() << "$\n"
-                 << "+ ----------- +\n\n\n";
+                << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getBaseProtection() << " PROT\n"
+                << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getPrice() << "$\n"
+                << "+ ----------- +\n\n\n";
 
             //potki
             cout << "+ -- Potki -- +\n";
@@ -331,16 +468,16 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 }
             }
             cout << "  M: " << sP << ", D: " << bP << "\n"
-                 << "+ ----------- +\n\n\n";
+                << "+ ----------- +\n\n\n";
 
             //dolary, złotówki, eurogąbki
             cout << "+ -- Pieniądze -- +\n"
-                 << "  " << getPlayer()->getMoney() << "$\n"
-                 << "+ --------------- +\n\n\n";
+                << "  " << getPlayer()->getMoney() << "$\n"
+                << "+ --------------- +\n\n\n";
 
             system("pause");
-            }
-            break;
+        }
+        break;
         case 3: {
             weaponBase bronie[] = {
                 weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
@@ -369,7 +506,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 cout << *getPlayer();
                 gotoxy(0, 4);
                 gU.setColor(15);
-                cout << powitanie << "\n"; 
+                cout << powitanie << "\n";
                 gU.setColor();
                 gotoxy(0, 8);
                 cout << "+ ------------------------------------------- ";
@@ -438,7 +575,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                         bronie[i] = weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
                         pancerze[i] = armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
                     }
-                } else if(innerChoice == "W" || innerChoice == "w") {
+                } else if (innerChoice == "W" || innerChoice == "w") {
                     isShopOpen = false;
                 } else {
                     //kup jeśli ma pieniądze, daj zwrot 20% za aktualnie posiadaną
