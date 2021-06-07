@@ -1,8 +1,8 @@
-# projekt-p2
+# projekt-p2 / Fajna Gra
 
 ## Instalacja
 Grę można zainstalować na 2 sposoby:
-* Pobranie wersji skompilowanej z tego gita
+* Pobranie wersji gotowej do uruchomienia z tego gita
 * Samodzielne zbudowanie wersji gry na podstawie plików
 
 ## Wymagania
