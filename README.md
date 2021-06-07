@@ -14,6 +14,13 @@ Biblioteki te można zainstalować przy użyciu [vcpkg.io](https://vcpkg.io/).
 
 vcpkg jest darmowym menedżerem bibliotek C/C++ do pozyskiwania i zarządzania bibliotekami. Jest on utrzymywany przez zespół Microsoft C++ i współtwórców open source.
 
+## Screeny
+![s1](https://i.imgur.com/yqUjTmP.png "s1")
+
+![s2](https://i.imgur.com/AmArYwI.png "s2")
+
+![s3](https://i.imgur.com/VkW0qFd.png "s3")
+
 ## Adnotacja
 Gra obsługuje zapisywanie postępów "w chmurze" dzięki mojemu API - [v4.api.mganczarczyk.pl](https://v4.api.mganczarczyk.pl/).
 
