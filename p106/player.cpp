@@ -34,19 +34,19 @@ player::player() {
 	weapon = new weaponBase(3.5, 0.08, 12);
 
 	//armor
-	armor = new armorBase(2, 6);
+	armorVALUE = new armor(2, 6, "Skorzana zbroja");
 
 	system("pause");
 	system("cls");
 }
 
-player::player(const std::string& username, const int& level, const int& xp, const double& money, const double& weapon_bD, const double& weapon_cC, const double& weapon_p, const double& armor_bP, const double& armor_p, const int& smallPotions, const int& bigPotions) {
+player::player(const std::string& username, const int& level, const int& xp, const double& money, const double& weapon_bD, const double& weapon_cC, const double& weapon_p, const double& armor_bP, const double& armor_p, const int& smallPotions, const int& bigPotions, const string& armor_name) {
 	this->username = username;
 	this->level = level;
 	this->xp = xp;
 	this->money = money;
 	this->weapon = new weaponBase(weapon_bD, weapon_cC, weapon_p);
-	this->armor = new armorBase(armor_bP, armor_p);
+	this->armorVALUE = new armor(armor_bP, armor_p, armor_name);
 	this->xpToNextLevel = 50 * this->level;
 	this->maxHealth = this->health = 50 * this->level;
 
@@ -95,7 +95,7 @@ player::player(const std::string& username, const int& level, const int& xp, con
 }
 
 player::~player() {
-	delete armor;
+	delete armorVALUE;
 	delete weapon;
 	for (int i = 0; i < 15; i++) {
 		delete potki[i];
@@ -138,8 +138,8 @@ weaponBase* player::getWeapon() {
 	return weapon;
 }
 
-armorBase* player::getArmor() {
-	return armor;
+armor* player::getArmor() {
+	return armorVALUE;
 }
 
 double player::getHealth() {
@@ -189,9 +189,9 @@ void player::setWeapon(weaponBase* wB) {
 	weapon = wB;
 }
 
-void player::setArmor(armorBase* aB) {
-	delete armor;
-	armor = aB;
+void player::setArmor(armor* aB) {
+	delete armorVALUE;
+	armorVALUE = aB;
 }
 
 void player::setMoney(const double& money) {
@@ -223,7 +223,7 @@ std::ostream& operator<<(std::ostream& o, const player& p) {
 	o << "|";
 	o << setfill('.') << setw(8) << std::right << p.xp << "/" << p.xpToNextLevel << "XP|";
 	o << "WEP:" << setfill('.') << setw(8) << std::right << p.weapon->getBaseDamage() << "/" << (p.weapon->getCriticalChance() * 100) << "%/" << p.weapon->getPrice() << "$|";
-	o << "ARM:" << setfill('.') << setw(8) << std::right << p.armor->getBaseProtection() << "/" << p.armor->getPrice() << "$|";
+	o << "ARM:" << setfill('.') << setw(8) << std::right << p.armorVALUE->getBaseProtection() << "/" << p.armorVALUE->getPrice() << "$|";
 	setColor(2);
 	o << "MON:" << setfill('.') << setw(6) << std::right << p.money << "$|";
 	setColor();

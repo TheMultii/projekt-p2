@@ -30,7 +30,10 @@ string get_uuid() {
 	//generator UUID v4, nawet przechodzi walidacjê(!)
 	string res;
 	char temp;
-	switch (rand() % 4) {
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<> distr(0, 3);
+	switch (distr(gen)) {
 		case 0:
 			temp = '8'; break;
 		case 1:

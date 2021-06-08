@@ -1,11 +1,11 @@
 #pragma once
+#include "equipment.h"
 #include <iostream>
 
-class weaponBase {
+class weaponBase: public equipment {
 private:
 	double baseDamage;
 	double criticalChance;
-	double price;
 
 	friend std::ostream& operator<<(std::ostream& o, const weaponBase& wB);
 public:

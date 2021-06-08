@@ -1,6 +1,7 @@
 ﻿#include "gameEngine.h"
 #include "gameUtilities.h"
 #include "settingsReader.h"
+#include "armor.h"
 #include "enemy.h"
 #include <iostream>
 #include <random>
@@ -65,6 +66,7 @@ gameEngine::gameEngine(const std::string& uuid) {
             double weapon_price = obj["weapon_price"].asDouble();
             double armor_baseProtection = obj["armor_baseProtection"].asDouble();
             double armor_price = obj["armor_price"].asDouble();
+            string armor_name = obj["armor_name"].asString();
             int smallPotions = obj["smallPotions"].asInt();
             int bigPotions = obj["bigPotions"].asInt();
             Player = new player(
@@ -78,7 +80,8 @@ gameEngine::gameEngine(const std::string& uuid) {
                 armor_baseProtection,
                 armor_price,
                 smallPotions,
-                bigPotions
+                bigPotions,
+                armor_name
             );
         }
     } else {
@@ -453,6 +456,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
             cout << "+ -- Armor -- +\n"
                 << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getBaseProtection() << " PROT\n"
                 << "  " << fixed << setprecision(2) << getPlayer()->getArmor()->getPrice() << "$\n"
+                << "  " << getPlayer()->getArmor()->getName() << "\n"
                 << "+ ----------- +\n\n\n";
 
             //potki
@@ -484,10 +488,10 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
                 weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()))
             };
-            armorBase pancerze[] = {
-                armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
-                armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
-                armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()))
+            armor pancerze[] = {
+                armor(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
+                armor(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel())),
+                armor(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()))
             };
             string powitania[8] = {
                     "Pokaż mi swoje towary...",
@@ -538,7 +542,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 cout << "PANCERZE";
                 gU.setColor();
                 cout << " ------------------------------------------- + \n";
-                cout << "|     PROT,  CENA\n";
+                cout << "|     PROT,  CENA," << setw(22) << setfill(' ') << "NAZWA\n";
                 gotoxy(98, 16);
                 cout << "|";
                 for (int i = 0; i < 3; i++) {
@@ -549,8 +553,9 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                     gU.setColor(7);
                     cout << fixed << setprecision(2) << pancerze[i].getBaseProtection() << ", ";
                     gU.setColor(2);
-                    cout << fixed << setprecision(2) << pancerze[i].getPrice() << "$\n";
+                    cout << fixed << setprecision(2) << pancerze[i].getPrice() << "$,";
                     gU.setColor();
+                    cout << setw(20) << setfill(' ') << pancerze[i].getName() << "\n";
                     gotoxy(98, 17 + i);
                     cout << "|";
                 }
@@ -573,7 +578,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 if (innerChoice == "O" || innerChoice == "o" || innerChoice == "0") {
                     for (int i = 0; i < 3; i++) {
                         bronie[i] = weaponBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(0.01, 0.05) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
-                        pancerze[i] = armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
+                        pancerze[i] = armor(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
                     }
                 } else if (innerChoice == "W" || innerChoice == "w") {
                     isShopOpen = false;
@@ -586,9 +591,9 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                             if (fLetter == 'P' || fLetter == 'p') { //pancerz
                                 if (getPlayer()->getMoney() >= pancerze[number].getPrice()) { //czy stać
                                     getPlayer()->setMoney(getPlayer()->getMoney() - pancerze[number].getPrice() + to2Decimal(getPlayer()->getArmor()->getPrice() * 0.2));
-                                    getPlayer()->setArmor(new armorBase(pancerze[number].getBaseProtection(), pancerze[number].getPrice()));
+                                    getPlayer()->setArmor(new armor(pancerze[number].getBaseProtection(), pancerze[number].getPrice()));
                                     for (int i = 0; i < 3; i++) {
-                                        pancerze[i] = armorBase(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
+                                        pancerze[i] = armor(to2Decimal(randomRangeDouble(1.0, 3.0) * getPlayer()->getLevel()), to2Decimal(randomRangeDouble(3.0, 25.0) * getPlayer()->getLevel()));
                                     }
                                     cout << "Pomyślnie zakupiono pancerz P" << number << "! Nie zapomnij zapisać gry :)\n";
                                 } else {

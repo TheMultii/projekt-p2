@@ -139,8 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="armor.cpp" />
     <ClCompile Include="armorBase.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="equipment.cpp" />
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="gameUtilities.cpp" />
     <ClCompile Include="p106.cpp" />
@@ -150,8 +152,10 @@
     <ClCompile Include="weaponBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="armor.h" />
     <ClInclude Include="armorBase.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="equipment.h" />
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="gameUtilities.h" />
     <ClInclude Include="player.h" />

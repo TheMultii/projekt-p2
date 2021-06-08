@@ -1,14 +1,13 @@
 #pragma once
+#include "equipment.h"
 #include <iostream>
 
-class armorBase {
+class armorBase: public equipment {
+protected:
 	double baseProtection;
-	double price;
-
-	friend std::ostream& operator<<(std::ostream& o, const armorBase& aB);
 public:
 	armorBase(const double& bP, const double& p);
-	double getPrice();
-	double getBaseProtection();
+	virtual double getPrice();
+	virtual double getBaseProtection();
 };
 
