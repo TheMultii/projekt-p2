@@ -50,7 +50,7 @@ gameEngine::gameEngine(const std::string& uuid) {
     if (is_parsed) {
         if (!obj.size()) {
             //serwer zwrócił np. 500 (wtedy coś zepsułem i muszę to naprawić :/) lub zapis w bazie nie istnieje
-            cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.\n\n";
+            cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżeli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.\n\n";
             system("pause");
             delete Player;
             Player = new player;
@@ -82,7 +82,7 @@ gameEngine::gameEngine(const std::string& uuid) {
             );
         }
     } else {
-        cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.\n\n";
+        cout << "Nie udało się wczytać postępów. Zamknij aplikację jeżeli nie chcesz utracić postępów, w przciwnym razie konto zostanie nadpisane profilem nowej gry.\n\n";
         system("pause");
         delete Player;
         Player = new player;
