@@ -211,7 +211,7 @@ void player::setHealth(const double& hp) {
 }
 
 void player::addXP(const int& val, const bool& drukuj) {
-	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomn� tego komentarza usun��.
+	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomnę tego komentarza usunąć.
 	xp += val;
 	if (xp < 0)
 		xp = 0;
