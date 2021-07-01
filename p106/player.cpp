@@ -1,4 +1,4 @@
-﻿#include "player.h"
+#include "player.h"
 #include <Windows.h>
 #include <iostream>
 #include <iomanip>
@@ -15,14 +15,14 @@ player::player() {
 	cout << "Zanim zaczniesz, wpisz swoje imię/nick:\n\nNazywam się ";
 	string imie_temp;
 	setColor(11);
-	//cin >> imie_temp; //ten sposób nie umużliwia nicków ze spacjami
+	//cin >> imie_temp; //ten sposób nie dopuszcza nicków ze spacjami
 	cin.ignore();
 	getline(cin, imie_temp, '\n');
 	setColor();
 	while(imie_temp.length() > 25 || !imie_temp.length()) {
 		system("cls");
 		cout << "\nTwoje imię/nick nie spełniają kryteriów (1-25 znaków). Dostosuj się, bo nie zagrasz >:C\n";
-		//cin >> imie_temp;  //ten sposób nie umużliwia nicków ze spacjami
+		//cin >> imie_temp;  //ten sposób nie dopuszcza nicków ze spacjami
 		getline(cin, imie_temp, '\n');
 	}
 	system("cls");
