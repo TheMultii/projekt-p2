@@ -1,4 +1,4 @@
-#include "weaponBase.h"
+﻿#include "weaponBase.h"
 #include <iomanip>
 
 weaponBase::weaponBase(const double& bD, const double& cC, const double& p) {

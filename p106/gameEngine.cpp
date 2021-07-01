@@ -277,7 +277,8 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                     gU.setColor(12);
                     cout << "\n\nNapotkałeś przeciwnika!\n";
                     gU.setColor();
-                    enemy* przeciwnik = new enemy(to2Decimal(randomRangeDouble(10, 50)), to2Decimal(randomRangeDouble(1.25, 2.5)));
+                    string oponentType = randomRange(0, 1) ? "GOBLIN" : "WAMPIR";
+                    enemy* przeciwnik = new enemy(to2Decimal(randomRangeDouble(10, 50)), to2Decimal(randomRangeDouble(1.25, 2.5)), oponentType);
                     cout << "Jest to: " << przeciwnik->getName() << " " << *przeciwnik;
                     cout << "\n\nCo robisz?\n1) Walczę!\n2) Próbuję uciec (40% szansy)";
                     int innerChoice;
@@ -367,7 +368,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                                     gU.setColor(12);
                                     cout << "\nPokonałeś "<< przeciwnik->getName() <<"!\n";
                                     gU.setColor();
-                                    double randomMoney = to2Decimal(randomRangeDouble(0.8, 2.5));
+                                    double randomMoney = to2Decimal(randomRangeDouble(1.6, 5));
                                     int randomXP = randomRange(1, 10);
                                     cout << "Zdobyłeś: ";
                                     gU.setColor(11);
@@ -460,7 +461,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                 << "+ ----------- +\n\n\n";
 
             //potki
-            cout << "+ -- Potki -- +\n";
+            cout << "+ --- Potki --- +\n";
             int bP = 0, sP = 0;
             for (int i = 0; i < 15; i++) {
                 if (getPlayer()->getPotions()[i] != NULL) {
@@ -471,8 +472,9 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                     }
                 }
             }
-            cout << "  M: " << sP << ", D: " << bP << "\n"
-                << "+ ----------- +\n\n\n";
+            cout << "  M: " << sP << " , D: " << bP << "\n"
+                 << "  +20HP, +50HP\n"
+                << "+ ------------- +\n\n\n";
 
             //dolary, złotówki, eurogąbki
             cout << "+ -- Pieniądze -- +\n"
@@ -610,9 +612,17 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                                 } else {
                                     cout << "Nie masz wystarczających środków na zakup broni B" << number << "!\n";
                                 }
+                            } else {
+                                //zły wybór (nie broń, nie pancerz)
+                                cout << "Wybrano złą opcję!\n";
                             }
+                        } else {
+                            //zły wybór (nie 0,1,2)
+                            cout << "Wybrano złą opcję!\n";
                         }
-
+                    } else {
+                        //zły wybór (>2 znaki)
+                        cout << "Wybrano złą opcję!\n";
                     }
                     this_thread::sleep_for(chrono::milliseconds(1000));
                 }

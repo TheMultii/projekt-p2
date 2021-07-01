@@ -1,4 +1,4 @@
-#include "player.h"
+Ôªø#include "player.h"
 #include <Windows.h>
 #include <iostream>
 #include <iomanip>
@@ -12,25 +12,29 @@ void setColor(const int& color_l = 7) {
 
 player::player() {
 	system("cls");
-	cout << "Zanim zaczniesz, wpisz swoje imiÍ/nick:\n\nNazywam siÍ ";
+	cout << "Zanim zaczniesz, wpisz swoje imiƒô/nick:\n\nNazywam siƒô ";
 	string imie_temp;
 	setColor(11);
-	cin >> imie_temp;
+	//cin >> imie_temp; //ten spos√≥b nie umu≈ºliwia nick√≥w ze spacjami
+	cin.ignore();
+	getline(cin, imie_temp, '\n');
 	setColor();
-	while(imie_temp.length()>25) {
+	while(imie_temp.length() > 25 || !imie_temp.length()) {
 		system("cls");
-		cout << "\nTwoje imiÍ/nick nie spe≥niajπ kryteriÛw (1-25 znakÛw). Dostosuj siÍ, bo nie zagrasz >:C\n";
-		cin >> imie_temp;
+		cout << "\nTwoje imiƒô/nick nie spe≈ÇniajƒÖ kryteri√≥w (1-25 znak√≥w). Dostosuj siƒô, bo nie zagrasz >:C\n";
+		//cin >> imie_temp;  //ten spos√≥b nie umu≈ºliwia nick√≥w ze spacjami
+		cin.ignore();
+		getline(cin, imie_temp, '\n');
 	}
 	system("cls");
-	cout << "Od dzisiaj nazywasz siÍ ";
+	cout << "Od dzisiaj nazywasz siƒô ";
 	setColor(11);
 	cout << imie_temp;
 	setColor();
 	username = imie_temp;
 	cout << "!\n\n";
 
-	//broÒ
+	//bro≈Ñ
 	weapon = new weaponBase(3.5, 0.08, 12);
 
 	//armor
@@ -51,7 +55,7 @@ player::player(const std::string& username, const int& level, const int& xp, con
 	this->maxHealth = this->health = 50 * this->level;
 
 	if (smallPotions + bigPotions > 15) {
-		cout << "\nIloúÊ potek siÍ nie zgadza, ustawiam na 10 ma≥ych, 5 duøych...\n";
+		cout << "\nIlo≈õƒá potek siƒô nie zgadza, ustawiam na 10 ma≈Çych, 5 du≈ºych...\n";
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 15; j++) {
 				if (potki[j] == NULL) {
@@ -178,6 +182,7 @@ void player::usePotion(std::string type) {
 			if (potki[i]->getType() == type) {
 				setHealth(getHealth() + potki[i]->getHealth());
 				delete potki[i];
+				potki[i] = NULL;
 				isSearching = false;
 			}
 		}

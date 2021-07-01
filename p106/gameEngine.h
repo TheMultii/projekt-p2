@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "player.h"
 #include <string>
 #include "settingsReader.h"
@@ -8,7 +8,7 @@ class gameEngine {
 private:
 	player* Player;
 public:
-	gameEngine(); //konstr. domy�lny (nowa gra)
+	gameEngine(); //konstr. domyślny (nowa gra)
 	gameEngine(const std::string& uuid); //konstr. z wczytywania gry
 
 	player* getPlayer();

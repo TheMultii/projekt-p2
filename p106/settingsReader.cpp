@@ -1,4 +1,4 @@
-#include "settingsReader.h"
+ï»¿#include "settingsReader.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -27,7 +27,7 @@ string gen_random(const int& len) {
 }
 
 string get_uuid() {
-	//generator UUID v4, nawet przechodzi walidacjê(!)
+	//generator UUID v4, nawet przechodzi walidacjÄ™(!)
 	string res;
 	char temp;
 	random_device rd;
@@ -82,7 +82,7 @@ settingsReader::settingsReader() {
 	linecount.open(".settings");
 	if (settingsFile.is_open()) {
 		if (count(istreambuf_iterator<char>(linecount), istreambuf_iterator<char>(), '\n')) {
-			//usuñ, stwórz
+			//usuÅ„, stwÃ³rz
 			fstream ofs;
 			ofs.open(".settings", ios::out | ios::trunc);
 			uuid = get_uuid();
@@ -92,10 +92,10 @@ settingsReader::settingsReader() {
 			string line;
 			while (getline(settingsFile, line)) {
 				if (regex_match(line, regex("[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}"))) {
-					//regex przeszed³, string to uuid v4
+					//regex przeszedÅ‚, string to uuid v4
 					uuid = line;
 				} else {
-					// ci¹g znaków to nie uuid v4, u¿ytkownik siê bawi³ z plikiem
+					// ciÄ…g znakÃ³w to nie uuid v4, uÅ¼ytkownik siÄ™ bawiÅ‚ z plikiem
 					uuid = get_uuid();
 					ofstream settingsFileSave;
 					settingsFileSave.open(".settings");
@@ -105,7 +105,7 @@ settingsReader::settingsReader() {
 			}
 		}
 	} else {
-		// nie ma takiego pliku, stwórz nowy
+		// nie ma takiego pliku, stwÃ³rz nowy
 		uuid = get_uuid();
 		ofstream settingsFileSave;
 		settingsFileSave.open(".settings");
@@ -115,20 +115,20 @@ settingsReader::settingsReader() {
 	}
 	settingsFile.close();
 	linecount.close();
-	//this_thread::sleep_for(chrono::milliseconds(1250)); //u¿ytkownik pomyœli, ¿e bardzo skomplikowana aplikacja siê ³adujê
+	//this_thread::sleep_for(chrono::milliseconds(1250)); //uÅ¼ytkownik pomyÅ›li, Å¼e bardzo skomplikowana aplikacja siÄ™ Å‚aduje
 	system("cls");
-	cout << "Rozpoczynam synchronizacjê z serwerem...\n";
+	cout << "Rozpoczynam synchronizacjÄ™ z serwerem...\n";
 	Json::Value obj{};
 	if (sync_server(obj)) {
 		system("cls");
 		v4Base = obj;
-		cout << "Pomyœlnie zsynchronizowano z serwerem.\nWersja API, z której korzystam: " << this->getAPIVersion();
+		cout << "PomyÅ›lnie zsynchronizowano z serwerem.\nWersja API, z ktÃ³rej korzystam: " << this->getAPIVersion();
 		string temp = "title Fajna gra - ";
 		temp.append(this->getAPIVersion());
 		system(temp.c_str());
 	} else {
 		system("cls");
-		cout << "Nie uda³o siê zsynchronizowaæ danych z serwerem. :(";
+		cout << "Nie udaÅ‚o siÄ™ zsynchronizowaÄ‡ danych z serwerem. :(";
 	}
 	this_thread::sleep_for(chrono::milliseconds(1250));
 	system("cls");

@@ -25,4 +25,4 @@ vcpkg jest darmowym menedżerem bibliotek C/C++ do pozyskiwania i zarządzania b
 Gra obsługuje zapisywanie postępów "w chmurze" dzięki mojemu API - [v4.api.mganczarczyk.pl](https://v4.api.mganczarczyk.pl/).
 
 ## Dokumentacja API dla gry
-[Dostępna pod tym linkiem](https://git.mganczarczyk.pl/TheMultii/projekt-p2/issues/1)
+[Dostępna pod tym linkiem](https://gitlab.mganczarczyk.pl/TheMultii/projekt-p2/-/issues/1)

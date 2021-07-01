@@ -1,4 +1,4 @@
-#include "armorBase.h"
+﻿#include "armorBase.h"
 
 armorBase::armorBase(const double& bP, const double& p) {
 	baseProtection = bP;
