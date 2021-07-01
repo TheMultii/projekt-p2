@@ -23,7 +23,6 @@ player::player() {
 		system("cls");
 		cout << "\nTwoje imię/nick nie spełniają kryteriów (1-25 znaków). Dostosuj się, bo nie zagrasz >:C\n";
 		//cin >> imie_temp;  //ten sposób nie umużliwia nicków ze spacjami
-		cin.ignore();
 		getline(cin, imie_temp, '\n');
 	}
 	system("cls");
@@ -207,10 +206,12 @@ void player::setHealth(const double& hp) {
 	health = hp;
 	if (health > getMaxHealth())
 		health = getMaxHealth();
+	if (health < 0)
+		health = 0;
 }
 
 void player::addXP(const int& val, const bool& drukuj) {
-	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomn� tego komentarza usun��.
+	//dopuszczam na tej fazie ujemny punkty XP. Pewnie potem zapomn� tego komentarza usun��.
 	xp += val;
 	if (xp < 0)
 		xp = 0;

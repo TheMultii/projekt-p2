@@ -308,7 +308,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                         //walka
                         bool yourTurn = true;
                         string innerGameChoice;
-                        while (przeciwnik->isAlive()) {
+                        while (przeciwnik->isAlive() && getPlayer()->getHealth() > 0) {
                             system("cls");
                             cout << *getPlayer() << "\n\n"<< przeciwnik->getName() <<": " << *przeciwnik << "\n\n";
                             gU.setColor(2);
@@ -397,7 +397,7 @@ void gameEngine::play(settingsReader& sR, gameUtilities& gU) {
                                     gU.setColor(12);
                                     cout << "PRZEGRAŁEŚ!\n\n";
                                     gU.setColor();
-                                    cout << "Pokanał cię " << przeciwnik->getName() << *przeciwnik << "\n\n";
+                                    cout << "Pokanał cię " << przeciwnik->getName() << " " << *przeciwnik << "\n\n";
                                     gU.setColor(2);
                                     przeciwnik->twarz();
                                     gU.setColor();
